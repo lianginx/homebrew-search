@@ -36,7 +36,7 @@ function handleParams() {
   }
 
   const { type = "" } = getQuery(event);
-  if (type !== "cask" && type !== "formula") {
+  if (type && type !== "cask" && type !== "formula") {
     throw createError({
       statusCode: 400,
       statusMessage: "Invalid type parameter, must be 'cask' or 'formula'",
