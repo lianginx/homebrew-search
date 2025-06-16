@@ -1,5 +1,5 @@
 export default defineEventHandler(async () => {
-  const storage = useStorage();
+  const storage = useStorage("assets:server");
 
   const newData = await getFormulas();
   for (const formula of newData) {

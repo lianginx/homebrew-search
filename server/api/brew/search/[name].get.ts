@@ -4,7 +4,7 @@ export default defineEventHandler(async () => {
   const { name, type, page, limit } = handleParams();
 
   // 查询缓存 key
-  const storage = useStorage();
+  const storage = useStorage("assets:server");
   const keys = await storage.getKeys(`${type}:`);
 
   // 模糊搜索
