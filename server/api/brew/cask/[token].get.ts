@@ -9,10 +9,10 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const { force = 1 } = getQuery(event);
+  const { force = 0 } = getQuery(event);
   const forceBoolean = Boolean(force);
 
-  const storage = useStorage("assets:server");
+  const storage = useStorage("data");
 
   // 抓取最新数据
   if (forceBoolean) {
