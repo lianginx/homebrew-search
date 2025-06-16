@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   const { force = 1 } = getQuery(event);
   const forceBoolean = Boolean(force);
 
-  const storage = useStorage("data");
+  const storage = useStorage();
 
   // 抓取最新数据
   if (forceBoolean) {
