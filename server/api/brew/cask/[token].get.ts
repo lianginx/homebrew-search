@@ -9,8 +9,8 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const { force = 0 } = getQuery(event);
-  const forceBoolean = Boolean(force);
+  const { force = "0" } = getQuery(event);
+  const forceBoolean = !!parseInt(force as string);
 
   const storage = useStorage("data");
 
@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // 返回缓存数据
-  const cask = await storage.getItem<Formula>(`cask:${name}`);
+  const cask = await storage.getItem<Formula>(`cask:${token}`);
   if (!cask) {
     throw createError({ statusCode: 404, statusMessage: "Cask not found" });
   }
