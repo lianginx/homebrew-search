@@ -9,8 +9,8 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const { force = 1 } = getQuery(event);
-  const forceBoolean = Boolean(force);
+  const { force = "0" } = getQuery(event);
+  const forceBoolean = !!parseInt(force as string);
 
   const storage = useStorage("data");
 
