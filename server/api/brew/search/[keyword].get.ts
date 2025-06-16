@@ -2,7 +2,7 @@ import Fuse from "fuse.js";
 import type { H3Event, EventHandlerRequest } from "h3";
 
 export default defineEventHandler(async (event) => {
-  const { name, type, page, limit } = handleParams(event);
+  const { keyword, type, page, limit } = handleParams(event);
 
   // 查询缓存 key
   const storage = useStorage("data");
@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
 
   // 模糊搜索
   const fuse = new Fuse(keys);
-  const searchedKeys = fuse.search(name).map((result) => result.item);
+  const searchedKeys = fuse.search(keyword).map((result) => result.item);
 
   // 分页
   const startIndex = (page - 1) * limit;
@@ -26,11 +26,11 @@ export default defineEventHandler(async (event) => {
 });
 
 function handleParams(event: H3Event<EventHandlerRequest>) {
-  const { name } = getRouterParams(event);
-  if (!name) {
+  const { keyword } = getRouterParams(event);
+  if (!keyword) {
     throw createError({
       statusCode: 400,
-      statusMessage: "Name parameter is required",
+      statusMessage: "keyword parameter is required",
     });
   }
 
@@ -53,7 +53,7 @@ function handleParams(event: H3Event<EventHandlerRequest>) {
   }
 
   return {
-    name,
+    keyword,
     type,
     page: pageNumber,
     limit: limitNumber,
