@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   const { force = "0" } = getQuery(event);
   const forceBoolean = !!parseInt(force as string);
 
-  const storage = useStorage("data");
+  const storage = useStorage("kv");
 
   // 抓取最新数据
   if (forceBoolean) {
