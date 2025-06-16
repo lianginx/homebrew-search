@@ -1,7 +1,8 @@
 import Fuse from "fuse.js";
+import type { H3Event, EventHandlerRequest } from "h3";
 
-export default defineEventHandler(async () => {
-  const { name, type, page, limit } = handleParams();
+export default defineEventHandler(async (event) => {
+  const { name, type, page, limit } = handleParams(event);
 
   // 查询缓存 key
   const storage = useStorage("assets:server");
@@ -24,9 +25,7 @@ export default defineEventHandler(async () => {
   return formulas;
 });
 
-function handleParams() {
-  const event = useEvent();
-
+function handleParams(event: H3Event<EventHandlerRequest>) {
   const { name } = getRouterParams(event);
   if (!name) {
     throw createError({
