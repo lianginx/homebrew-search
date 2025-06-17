@@ -30,7 +30,7 @@ async function handleCopyInstallCommand() {
       </div>
     </template>
 
-    <div class="flex flex-wrap line-clamp-2 h-10 text-sm text-neutral-400">
+    <div class="flex flex-wrap line-clamp-2 h-10 text-sm text-neutral-500">
       {{ item.desc }}
     </div>
 
