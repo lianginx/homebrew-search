@@ -1,71 +1,64 @@
 <script setup lang="ts">
+import { zh_cn } from "@nuxt/ui/locale";
 import type { Cask, Formula } from "./type/brew";
 
-const keyword = ref("");
+interface SearchResult {
+  list: Array<Cask | Formula>;
+  total: number;
+  page: number;
+  limit: number;
+}
 
-const { data: searchResult, refresh } = await useFetch<Cask[] | Formula[]>(
+const colorMode = useColorMode();
+colorMode.preference = "dark";
+
+const page = ref(1);
+const limit = ref(16);
+const type = ref("");
+const keyword = ref("wechat");
+
+const { data: searchResult, refresh } = await useFetch<SearchResult>(
   () => `/api/brew/search/${keyword.value}`,
   {
-    immediate: false,
+    query: { type, page, limit },
+    // immediate: false,
     watch: false,
   }
 );
-
-const disabledPull = ref(false);
-const pullSuccess = ref(false);
-async function handlePull() {
-  try {
-    disabledPull.value = true;
-    await Promise.all([
-      $fetch("/api/brew/cask/pull", { method: "POST" }),
-      $fetch("/api/brew/formula/pull", { method: "POST" }),
-    ]);
-    pullSuccess.value = true;
-    setTimeout(() => (pullSuccess.value = false), 1000);
-  } finally {
-    disabledPull.value = false;
-  }
-}
-
-onMounted(async () => {
-  await handlePull();
-});
 </script>
 
 <template>
-  <div>
-    <div style="display: flex; align-items: center">
-      <input
-        v-model="keyword"
-        style="width: 240px; height: 32px; padding: 0 16px"
-        @keydown.enter="refresh()"
+  <UApp :locale="zh_cn">
+    <div class="p-8">
+      <div class="flex items-center mb-8 space-x-4">
+        <UInput
+          v-model="keyword"
+          class="w-60"
+          size="xl"
+          icon="heroicons-solid:search"
+          @keydown.enter="refresh()"
+        />
+        <UButton size="xl" @click="refresh()">搜索</UButton>
+      </div>
+      <div class="grid grid-cols-1 gap-8 sm:grid-cols-4">
+        <template v-for="(item, index) in searchResult?.list" :key="index">
+          <CoreItem
+            v-if="item.tap === 'homebrew/core'"
+            :item="item as Formula"
+          />
+          <CaskItem v-if="item.tap === 'homebrew/cask'" :item="item as Cask" />
+        </template>
+      </div>
+      <UPagination
+        v-if="searchResult"
+        v-model:page="page"
+        class="mt-8"
+        :items-per-page="searchResult.limit"
+        :total="searchResult.total"
+        @update:page="refresh()"
       />
-      <button
-        style="height: 36px; margin-left: 8px; padding: 0 24px"
-        @click="refresh()"
-      >
-        搜索
-      </button>
-      <button
-        style="height: 36px; margin-left: 16px; padding: 0 24px"
-        :disabled="disabledPull"
-        @click="handlePull"
-      >
-        更新源
-      </button>
-      <div v-if="pullSuccess" style="margin-left: 8px; color: #999">
-        软件源更新成功
-      </div>
     </div>
-    <div>
-      <div
-        v-for="(item, index) in searchResult"
-        :key="index"
-        style="margin-top: 32px"
-      >
-        <CoreItem v-if="item.tap === 'homebrew/core'" :item="item as Formula" />
-        <CaskItem v-if="item.tap === 'homebrew/cask'" :item="item as Cask" />
-      </div>
-    </div>
-  </div>
+  </UApp>
 </template>
+
+<style scoped></style>

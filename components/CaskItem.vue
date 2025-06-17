@@ -5,52 +5,46 @@ const props = defineProps<{
   item: Cask;
 }>();
 
-const installCommand = ref(`brew install --cask ${props.item.token}`);
+const toast = useToast();
+
+const installCommand = ref(`brew install --cask ${props.item.full_token}`);
+async function handleCopyInstallCommand() {
+  await navigator.clipboard.writeText(installCommand.value);
+  toast.add({ title: "已复制安装命令到剪贴板，请到终端中执行！" });
+}
 </script>
 
 <template>
-  <div>
-    <div style="display: flex; align-items: baseline">
-      <div style="font-weight: bold">{{ item.name[0] }}</div>
-      <div
-        style="
-          font-size: small;
-          margin-left: 16px;
-          background: #eee;
-          padding: 1px 8px;
-          border-radius: 4px;
-        "
-      >
-        {{ item.version }}
+  <UCard class="group">
+    <template #header>
+      <div class="flex justify-between items-center">
+        <div>
+          <div class="font-bold line-clamp-1">{{ item.name[0] }}</div>
+          <div class="text-xs text-neutral-600 mt-0.5">{{ item.version }}</div>
+        </div>
+        <UBadge variant="subtle">
+          {{
+            { "homebrew/core": "Formula", "homebrew/cask": "Cask" }[item.tap]
+          }}
+        </UBadge>
       </div>
+    </template>
+
+    <div class="flex flex-wrap line-clamp-2 h-10 text-sm text-neutral-400">
+      {{ item.desc }}
     </div>
-    <div
-      style="
-        display: flex;
-        flex-wrap: wrap;
-        font-size: small;
-        color: #999;
-        margin-top: 8px;
-      "
-    >
-      <div
-        v-for="(name, index) in item.name.slice(1)"
-        :key="name"
-        style="margin-right: 16px"
-      >
-        {{ name }}
-        {{ index === item.name.slice(1).length - 1 ? "" : "/" }}
+
+    <template #footer>
+      <div class="text-sm flex justify-between items-center">
+        <ULink :href="item.homepage" target="_blank">官网</ULink>
+        <UButton
+          class="sm:invisible group-hover:visible"
+          size="sm"
+          @click="handleCopyInstallCommand"
+        >
+          复制命令
+        </UButton>
       </div>
-    </div>
-    <div
-      style="
-        margin-top: 8px;
-        background: #eee;
-        padding: 8px 16px;
-        border-radius: 4px;
-      "
-    >
-      {{ installCommand }}
-    </div>
-  </div>
+    </template>
+  </UCard>
 </template>

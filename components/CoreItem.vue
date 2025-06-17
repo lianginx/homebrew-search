@@ -5,34 +5,48 @@ const props = defineProps<{
   item: Formula;
 }>();
 
-const installCommand = ref(`brew install --cask ${props.item.name}`);
+const toast = useToast();
+
+const installCommand = ref(`brew install ${props.item.name}`);
+async function handleCopyInstallCommand() {
+  await navigator.clipboard.writeText(installCommand.value);
+  toast.add({ title: "已复制安装命令到剪贴板，请到终端中执行！" });
+}
 </script>
 
 <template>
-  <div>
-    <div style="display: flex; align-items: baseline">
-      <div style="font-weight: bold">{{ item.name }}</div>
-      <div
-        style="
-          font-size: small;
-          margin-left: 16px;
-          background: #eee;
-          padding: 1px 8px;
-          border-radius: 4px;
-        "
-      >
-        {{ item.versions.stable }}
+  <UCard class="group">
+    <template #header>
+      <div class="flex justify-between items-center">
+        <div>
+          <div class="font-bold line-clamp-1">{{ item.name }}</div>
+          <div class="text-xs text-neutral-600 mt-0.5">
+            {{ item.versions.stable }}
+          </div>
+        </div>
+        <UBadge variant="subtle">
+          {{
+            { "homebrew/core": "Formula", "homebrew/cask": "Cask" }[item.tap]
+          }}
+        </UBadge>
       </div>
+    </template>
+
+    <div class="flex flex-wrap line-clamp-2 h-10 text-sm text-neutral-400">
+      {{ item.desc }}
     </div>
-    <div
-      style="
-        margin-top: 8px;
-        background: #eee;
-        padding: 8px 16px;
-        border-radius: 4px;
-      "
-    >
-      {{ installCommand }}
-    </div>
-  </div>
+
+    <template #footer>
+      <div class="text-sm flex justify-between items-center">
+        <ULink :href="item.homepage" target="_blank">官网</ULink>
+        <UButton
+          class="sm:invisible group-hover:visible"
+          size="sm"
+          @click="handleCopyInstallCommand"
+        >
+          复制命令
+        </UButton>
+      </div>
+    </template>
+  </UCard>
 </template>

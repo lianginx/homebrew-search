@@ -12,17 +12,20 @@ export default defineEventHandler(async (event) => {
   const fuse = new Fuse(keys);
   const searchedKeys = fuse.search(keyword).map((result) => result.item);
 
+  // 总数
+  const total = searchedKeys.length;
+
   // 分页
   const startIndex = (page - 1) * limit;
   const endIndex = startIndex + limit;
   const paginatedKeys = searchedKeys.slice(startIndex, endIndex);
 
   // 查询缓存
-  const formulas = await Promise.all(
+  const list = await Promise.all(
     paginatedKeys.map((key) => storage.getItem(key))
   );
 
-  return formulas;
+  return { list, total, page, limit };
 });
 
 function handleParams(event: H3Event<EventHandlerRequest>) {
