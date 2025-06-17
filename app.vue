@@ -27,7 +27,9 @@ async function handlePull() {
   }
 }
 
-await handlePull();
+onMounted(async () => {
+  await handlePull();
+});
 </script>
 
 <template>
