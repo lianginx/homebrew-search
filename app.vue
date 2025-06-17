@@ -25,6 +25,12 @@ const { data: searchResult, refresh } = await useFetch<SearchResult>(
     watch: false,
   }
 );
+
+async function handleSearch() {
+  if (!keyword.value.trim()) return;
+  page.value = 1;
+  refresh();
+}
 </script>
 
 <template>
@@ -36,9 +42,9 @@ const { data: searchResult, refresh } = await useFetch<SearchResult>(
           class="w-60"
           size="xl"
           icon="heroicons-solid:search"
-          @keydown.enter="refresh()"
+          @keydown.enter="handleSearch"
         />
-        <UButton size="xl" @click="refresh()">搜索</UButton>
+        <UButton size="xl" @click="handleSearch">搜索</UButton>
       </div>
       <div class="grid grid-cols-1 gap-8 sm:grid-cols-4">
         <template v-for="(item, index) in searchResult?.list" :key="index">
