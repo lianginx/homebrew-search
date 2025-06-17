@@ -56,7 +56,7 @@ async function handleSearch() {
         </template>
       </div>
       <UPagination
-        v-if="searchResult"
+        v-if="searchResult?.total"
         v-model:page="page"
         class="mt-8"
         :items-per-page="searchResult.limit"
