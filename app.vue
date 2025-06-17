@@ -3,10 +3,11 @@ import type { Cask, Formula } from "./type/brew";
 
 const keyword = ref("");
 
-const { data: searchResult, refresh } = useFetch<Cask[] | Formula[]>(
+const { data: searchResult, refresh } = await useFetch<Cask[] | Formula[]>(
   () => `/api/brew/search/${keyword.value}`,
   {
     immediate: false,
+    watch: false,
   }
 );
 
@@ -35,6 +36,7 @@ await handlePull();
       <input
         v-model="keyword"
         style="width: 240px; height: 32px; padding: 0 16px"
+        @keydown.enter="refresh()"
       />
       <button
         style="height: 36px; margin-left: 8px; padding: 0 24px"
