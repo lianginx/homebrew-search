@@ -50,7 +50,7 @@ await handlePull();
         更新源
       </button>
       <div v-if="pullSuccess" style="margin-left: 8px; color: #999">
-        更新成功
+        软件源更新成功
       </div>
     </div>
     <div>
