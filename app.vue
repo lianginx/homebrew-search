@@ -23,6 +23,8 @@ async function handlePull() {
     disabledPull.value = false;
   }
 }
+
+await handlePull();
 </script>
 
 <template>
