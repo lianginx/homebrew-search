@@ -46,17 +46,25 @@ async function handleSearch() {
   <UApp :locale="zh_cn">
     <div>
       <!-- 顶栏 -->
-      <div class="fixed top-0 w-full flex justify-between items-center p-8">
-        <div class="flex items-center space-x-4">
+      <div
+        class="fixed top-0 w-full flex justify-between items-center p-4 sm:p-8"
+      >
+        <div class="flex items-center">
           <template v-if="!first">
             <UInput
               v-model="keyword"
-              class="w-60"
+              class="w-70 sm:w-80"
               size="xl"
               icon="heroicons-solid:search"
               @keydown.enter="handleSearch"
             />
-            <UButton size="xl" @click="handleSearch"> 搜索 </UButton>
+            <UButton
+              class="ml-4 hidden sm:flex"
+              size="xl"
+              @click="handleSearch"
+            >
+              搜索
+            </UButton>
           </template>
         </div>
         <div>
@@ -65,6 +73,7 @@ async function handleSearch() {
               :icon="colorModeIcon"
               variant="outline"
               color="neutral"
+              size="xl"
               @click="handleSwitchColorMode"
             />
           </ClientOnly>
@@ -74,25 +83,29 @@ async function handleSearch() {
       <!-- 首屏搜索 -->
       <div
         v-if="first"
-        class="flex flex-col justify-center items-center h-screen"
+        class="flex flex-col justify-center items-center h-screen text-center"
       >
-        <div class="text-primary text-5xl font-bold mb-4">Homebrew Search</div>
+        <div class="text-primary text-5xl font-black mb-4">Homebrew Search</div>
         <div class="mb-12">最好用的 Homebrew 软件源搜索工具</div>
-        <div class="flex items-center space-x-4">
+        <div class="flex flex-col sm:flex-row items-center">
           <UInput
             v-model="keyword"
             class="w-80"
             size="xl"
             icon="heroicons-solid:search"
+            enterkeyhint="search"
+            placeholder="搜索名称..."
             @keydown.enter="handleSearch"
           />
-          <UButton size="xl" @click="handleSearch"> 搜索 </UButton>
+          <UButton class="ml-4 hidden sm:flex" size="xl" @click="handleSearch">
+            搜索
+          </UButton>
         </div>
       </div>
 
       <!-- 列表 -->
-      <div v-else class="m-8">
-        <div class="grid grid-cols-1 gap-8 sm:grid-cols-4 mt-26">
+      <div v-else class="m-4 sm:m-8">
+        <div class="grid grid-cols-1 gap-8 sm:grid-cols-4 mt-22 sm:mt-26">
           <template v-for="(item, index) in searchResult?.list" :key="index">
             <CoreItem
               v-if="item.tap === 'homebrew/core'"
