@@ -1,6 +1,6 @@
 # Homebrew Search
 
-一个基于 Nuxt.js 的现代前端应用程序，用于快速搜索的 Homebrew 包（ Cask 和 Formula ）。
+一个可能是最易用的 Homebrew Cask/Formula 在线搜索工具，提供简洁美观的界面与快速精准的搜索体验。
 
 ![output](https://github.com/user-attachments/assets/264dc8d4-d66d-4632-910c-0aab905d4041)
 
