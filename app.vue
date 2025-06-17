@@ -15,13 +15,13 @@ colorMode.preference = "dark";
 const page = ref(1);
 const limit = ref(16);
 const type = ref("");
-const keyword = ref("wechat");
+const keyword = ref("");
 
 const { data: searchResult, refresh } = await useFetch<SearchResult>(
   () => `/api/brew/search/${keyword.value}`,
   {
     query: { type, page, limit },
-    // immediate: false,
+    immediate: false,
     watch: false,
   }
 );
