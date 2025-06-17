@@ -25,14 +25,15 @@ const page = ref(1);
 const limit = ref(16);
 const type = ref("");
 const keyword = ref("");
-const { data: searchResult, refresh } = await useFetch<SearchResult>(
-  () => `/api/brew/search/${keyword.value}`,
-  {
-    query: { type, page, limit },
-    immediate: false,
-    watch: false,
-  }
-);
+const {
+  data: searchResult,
+  status,
+  refresh,
+} = await useFetch<SearchResult>(() => `/api/brew/search/${keyword.value}`, {
+  query: { type, page, limit },
+  immediate: false,
+  watch: false,
+});
 
 async function handleSearch() {
   if (!keyword.value.trim()) return;
@@ -53,7 +54,7 @@ async function handleSearch() {
           <template v-if="!first">
             <UInput
               v-model="keyword"
-              class="w-70 sm:w-80"
+              class="w-full sm:w-80"
               size="xl"
               icon="heroicons-solid:search"
               @keydown.enter="handleSearch"
@@ -61,21 +62,35 @@ async function handleSearch() {
             <UButton
               class="ml-4 hidden sm:flex"
               size="xl"
+              :loading="status === 'pending'"
               @click="handleSearch"
             >
               搜索
             </UButton>
           </template>
         </div>
-        <div>
-          <ClientOnly>
+        <div class="space-x-2">
+          <UTooltip text="在 GitHub 上打开">
             <UButton
-              :icon="colorModeIcon"
+              icon="lucide:github"
               variant="outline"
               color="neutral"
               size="xl"
-              @click="handleSwitchColorMode"
+              href="https://github.com/lianginx/homebrew-search"
+              target="_blank"
             />
+          </UTooltip>
+          <ClientOnly>
+            <UTooltip text="切换主题">
+              <UButton
+                :icon="colorModeIcon"
+                variant="outline"
+                color="neutral"
+                size="xl"
+                :loading="status === 'pending'"
+                @click="handleSwitchColorMode"
+              />
+            </UTooltip>
           </ClientOnly>
         </div>
       </div>
@@ -97,7 +112,12 @@ async function handleSearch() {
             placeholder="搜索名称..."
             @keydown.enter="handleSearch"
           />
-          <UButton class="ml-4 hidden sm:flex" size="xl" @click="handleSearch">
+          <UButton
+            class="ml-4 hidden sm:flex"
+            size="xl"
+            :loading="status === 'pending'"
+            @click="handleSearch"
+          >
             搜索
           </UButton>
         </div>
