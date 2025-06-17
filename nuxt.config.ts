@@ -4,4 +4,13 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
   modules: ["@nuxt/eslint", "@nuxt/ui"],
   css: ["~/assets/css/main.css"],
+  nitro: {
+    experimental: {
+      tasks: true,
+    },
+    scheduledTasks: {
+      // 每 10 分钟抓取一次最新数据
+      "*/10 * * * *": ["brew:pull"],
+    },
+  },
 });
