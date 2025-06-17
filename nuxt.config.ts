@@ -4,6 +4,18 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
   modules: ["@nuxt/eslint", "@nuxt/ui"],
   css: ["~/assets/css/main.css"],
+  app: {
+    head: {
+      title: "Homebrew Search",
+      meta: [
+        {
+          name: "description",
+          content:
+            "可能是最易用的 Homebrew Cask/Formula 在线搜索工具，提供简洁美观的界面与快速精准的搜索体验。",
+        },
+      ],
+    },
+  },
   nitro: {
     experimental: {
       tasks: true,
