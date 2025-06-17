@@ -11,6 +11,7 @@ const { data: searchResult, refresh } = useFetch<Cask[] | Formula[]>(
 );
 
 const disabledPull = ref(false);
+const pullSuccess = ref(false);
 async function handlePull() {
   try {
     disabledPull.value = true;
@@ -18,7 +19,8 @@ async function handlePull() {
       $fetch("/api/brew/cask/pull", { method: "POST" }),
       $fetch("/api/brew/formula/pull", { method: "POST" }),
     ]);
-    alert("已更新软件源");
+    pullSuccess.value = true;
+    setTimeout(() => (pullSuccess.value = false), 1000);
   } finally {
     disabledPull.value = false;
   }
@@ -47,6 +49,9 @@ await handlePull();
       >
         更新源
       </button>
+      <div v-if="pullSuccess" style="margin-left: 8px; color: #999">
+        更新成功
+      </div>
     </div>
     <div>
       <div
