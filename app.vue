@@ -2,18 +2,6 @@
 import { zh_cn } from "@nuxt/ui/locale";
 import type { Cask, Formula } from "~/type/brew";
 
-const route = useRoute();
-
-const colorMode = useColorMode();
-
-const colorModeIcon = computed(() => {
-  return colorMode.value === "dark" ? "i-lucide:moon" : "i-lucide:sun";
-});
-
-function handleSwitchColorMode() {
-  colorMode.preference = colorMode.value === "dark" ? "light" : "dark";
-}
-
 interface SearchResult {
   list: Array<Cask | Formula>;
   total: number;
@@ -21,32 +9,31 @@ interface SearchResult {
   limit: number;
 }
 
-const first = ref(!route.query.q);
+const route = useRoute();
 
+const first = ref(!route.query.q);
 const page = ref(1);
 const limit = ref(16);
-const type = ref("");
+const type = ref();
 const keyword = ref((route.query.q as string) ?? "");
 
-const {
-  data: searchResult,
-  status,
-  refresh,
-} = await useFetch<SearchResult>(() => `/api/brew/search/${keyword.value}`, {
-  query: { type, page, limit },
-  immediate: !!keyword.value,
-  watch: false,
-});
+const { data, status, error, refresh, clear } = await useFetch<SearchResult>(
+  () => `/api/brew/search/${keyword.value}`,
+  {
+    query: {
+      // 为了解决 UTabs 组件的 Bug
+      // 当选项 value 为 undfined 或 '' 时，modelValue 会被赋值为 0
+      type: computed(() => (type.value == 0 ? undefined : type.value)),
+      page,
+      limit,
+    },
+    immediate: !!keyword.value,
+    watch: false,
+  }
+);
 
-// 搜索快捷键 meta + k
-const searchInputRef = useTemplateRef("search-input");
-defineShortcuts({
-  meta_k: () => {
-    if (searchInputRef.value?.inputRef) {
-      searchInputRef.value.inputRef.setSelectionRange(0, keyword.value.length);
-      searchInputRef.value.inputRef.focus();
-    }
-  },
+watch(error, () => {
+  useToast().add({ title: error.value?.statusMessage, color: "error" });
 });
 
 async function handleSearch() {
@@ -60,7 +47,28 @@ async function handleRestore() {
   page.value = 1;
   keyword.value = "";
   first.value = true;
+  clear();
 }
+
+// 亮/暗主题
+const colorMode = useColorMode();
+const colorModeIcon = computed(() => {
+  return colorMode.value === "dark" ? "i-lucide:moon" : "i-lucide:sun";
+});
+function handleSwitchColorMode() {
+  colorMode.preference = colorMode.value === "dark" ? "light" : "dark";
+}
+
+// 搜索快捷键 meta + k
+const searchInputRef = useTemplateRef("search-input");
+defineShortcuts({
+  meta_k: () => {
+    if (searchInputRef.value?.inputRef) {
+      searchInputRef.value.inputRef.setSelectionRange(0, keyword.value.length);
+      searchInputRef.value.inputRef.focus();
+    }
+  },
+});
 </script>
 
 <template>
@@ -164,8 +172,20 @@ async function handleRestore() {
 
       <!-- 列表 -->
       <UContainer v-show="!first" class="my-20 sm:mt-28">
+        <UTabs
+          v-model="type"
+          class="mb-6"
+          size="xl"
+          variant="link"
+          :items="[
+            { label: 'All', value: undefined },
+            { label: 'Formula', value: 'formula' },
+            { label: 'Cask', value: 'cask' },
+          ]"
+          @update:model-value="handleSearch"
+        />
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-4">
-          <template v-for="(item, index) in searchResult?.list" :key="index">
+          <template v-for="(item, index) in data?.list" :key="index">
             <CoreItem
               v-if="item.tap === 'homebrew/core'"
               :item="item as Formula"
@@ -177,11 +197,11 @@ async function handleRestore() {
           </template>
         </div>
         <UPagination
-          v-if="searchResult?.total"
+          v-if="data?.total"
           v-model:page="page"
-          class="mt-12"
-          :items-per-page="searchResult.limit"
-          :total="searchResult.total"
+          class="mt-8"
+          :items-per-page="data.limit"
+          :total="data.total"
           @update:page="refresh()"
         />
       </UContainer>
