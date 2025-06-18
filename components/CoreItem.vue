@@ -7,28 +7,40 @@ const props = defineProps<{
 
 const toast = useToast();
 
-const installCommand = ref(`brew install ${props.item.name}`);
+const type = computed(() => {
+  const typeMap: Record<string, string> = {
+    "homebrew/core": "Formula",
+    "homebrew/cask": "Cask",
+  };
+  const key = props.item.tap;
+  return typeMap[key] ?? "";
+});
+
+const installCommand = computed(() => `brew install ${props.item.name}`);
 async function handleCopyInstallCommand() {
   await navigator.clipboard.writeText(installCommand.value);
-  toast.add({ title: "已复制安装命令到剪贴板，请到终端中执行！" });
+  toast.add({
+    title: "已复制安装命令到剪贴板，请到终端中执行！",
+    duration: 1500,
+  });
 }
 </script>
 
 <template>
   <UCard class="group">
     <template #header>
-      <div class="flex justify-between items-center">
+      <div class="flex justify-between items-center space-x-2">
         <div>
           <div class="font-bold line-clamp-1">{{ item.name }}</div>
-          <div class="text-xs text-neutral-600 mt-0.5">
-            {{ item.versions.stable }}
-          </div>
+          <ULink
+            class="text-xs text-neutral-600 mt-0.5 line-clamp-1 break-all"
+            :href="item.homepage"
+            target="_blank"
+          >
+            {{ item.homepage }}
+          </ULink>
         </div>
-        <UBadge variant="subtle">
-          {{
-            { "homebrew/core": "Formula", "homebrew/cask": "Cask" }[item.tap]
-          }}
-        </UBadge>
+        <UBadge variant="subtle">{{ type }}</UBadge>
       </div>
     </template>
 
@@ -38,14 +50,19 @@ async function handleCopyInstallCommand() {
 
     <template #footer>
       <div class="text-sm flex justify-between items-center">
-        <ULink :href="item.homepage" target="_blank">官网</ULink>
-        <UButton
-          class="sm:invisible group-hover:visible"
-          size="sm"
-          @click="handleCopyInstallCommand"
-        >
-          复制命令
-        </UButton>
+        <div>
+          <div class="text-xs text-neutral-600">{{ item.versions.stable }}</div>
+        </div>
+        <div class="space-x-4">
+          <UButton
+            class="sm:invisible group-hover:visible"
+            size="sm"
+            variant="soft"
+            @click="handleCopyInstallCommand"
+          >
+            复制命令
+          </UButton>
+        </div>
       </div>
     </template>
   </UCard>
