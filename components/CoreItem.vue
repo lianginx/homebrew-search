@@ -27,7 +27,7 @@ async function handleCopyInstallCommand() {
 </script>
 
 <template>
-  <UCard class="group">
+  <UCard class="group hover:shadow-2xl/8 shadow-primary">
     <template #header>
       <div class="flex justify-between items-center space-x-2">
         <div>
