@@ -184,7 +184,7 @@ defineShortcuts({
           ]"
           @update:model-value="handleSearch"
         />
-        <div class="grid grid-cols-1 gap-6 sm:grid-cols-4">
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
           <template v-for="(item, index) in data?.list" :key="index">
             <CoreItem
               v-if="item.tap === 'homebrew/core'"
@@ -200,6 +200,7 @@ defineShortcuts({
           v-if="data?.total"
           v-model:page="page"
           class="mt-8"
+          size="lg"
           :items-per-page="data.limit"
           :total="data.total"
           @update:page="refresh()"
