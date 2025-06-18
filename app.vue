@@ -38,6 +38,17 @@ const {
   watch: false,
 });
 
+// 搜索快捷键 meta + k
+const searchInputRef = useTemplateRef("search-input");
+defineShortcuts({
+  meta_k: () => {
+    if (searchInputRef.value?.inputRef) {
+      searchInputRef.value.inputRef.setSelectionRange(0, keyword.value.length);
+      searchInputRef.value.inputRef.focus();
+    }
+  },
+});
+
 async function handleSearch() {
   if (!keyword.value) return;
   page.value = 1;
@@ -56,6 +67,7 @@ async function handleSearch() {
         <div class="flex items-center">
           <template v-if="!first">
             <UInput
+            ref="search-input"
               v-model="keyword"
               class="w-full sm:w-80"
               size="xl"
