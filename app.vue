@@ -163,8 +163,8 @@ async function handleRestore() {
       </div>
 
       <!-- 列表 -->
-      <div v-show="!first" class="m-4 sm:m-8">
-        <div class="grid grid-cols-1 gap-8 sm:grid-cols-4 mt-20 sm:mt-28">
+      <UContainer v-show="!first" class="my-20 sm:mt-28">
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-4">
           <template v-for="(item, index) in searchResult?.list" :key="index">
             <CoreItem
               v-if="item.tap === 'homebrew/core'"
@@ -179,12 +179,12 @@ async function handleRestore() {
         <UPagination
           v-if="searchResult?.total"
           v-model:page="page"
-          class="mt-8"
+          class="mt-12"
           :items-per-page="searchResult.limit"
           :total="searchResult.total"
           @update:page="refresh()"
         />
-      </div>
+      </UContainer>
     </div>
   </UApp>
 </template>
