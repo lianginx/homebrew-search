@@ -53,7 +53,13 @@ async function handleSearch() {
   if (!keyword.value) return;
   page.value = 1;
   first.value = false;
-  refresh();
+  await refresh();
+}
+
+async function handleRestore() {
+  page.value = 1;
+  keyword.value = "";
+  first.value = true;
 }
 </script>
 
@@ -62,29 +68,34 @@ async function handleSearch() {
     <div>
       <!-- 顶栏 -->
       <div
-        class="fixed top-0 w-full flex justify-between items-center p-4 sm:p-8"
+        class="fixed top-0 w-full flex justify-between items-center p-4 sm:p-8 bg-gradient-to-b from-(--ui-bg)/80 to-transparent"
       >
-        <div class="flex items-center">
-          <template v-if="!first">
-            <UInput
-            ref="search-input"
-              v-model="keyword"
-              class="w-full sm:w-80"
-              size="xl"
-              icon="heroicons-solid:search"
-              @keydown.enter="handleSearch"
-            />
-            <UButton
-              class="ml-4 hidden sm:flex"
-              size="xl"
-              :loading="status === 'pending'"
-              @click="handleSearch"
-            >
-              搜索
-            </UButton>
-          </template>
+        <div>
+          <div
+            v-show="!first"
+            class="mr-8 cursor-pointer hidden sm:flex items-center"
+            @click="handleRestore"
+          >
+            <UIcon name="devicon:homebrew" variant="outline" size="44" />
+            <span class="ml-2 font-black text-primary text-2xl leading-none">
+              <div>Homebrew</div>
+              <div>Search</div>
+            </span>
+          </div>
         </div>
-        <div class="space-x-2">
+        <div
+          class="flex-1 sm:flex-none space-x-2 flex items-center justify-end"
+        >
+          <UInput
+            v-if="!first"
+            ref="search-input"
+            v-model="keyword"
+            class="w-full sm:w-80"
+            size="xl"
+            icon="heroicons-solid:search"
+            placeholder="搜索名称..."
+            @keydown.enter="handleSearch"
+          />
           <UTooltip text="在 GitHub 上打开">
             <UButton
               icon="lucide:github"
@@ -102,7 +113,6 @@ async function handleSearch() {
                 variant="outline"
                 color="neutral"
                 size="xl"
-                :loading="status === 'pending'"
                 @click="handleSwitchColorMode"
               />
             </UTooltip>
@@ -112,11 +122,24 @@ async function handleSearch() {
 
       <!-- 首屏搜索 -->
       <div
-        v-if="first"
-        class="flex flex-col justify-center items-center h-screen text-center"
+        v-show="first"
+        class="flex flex-col items-center h-screen text-center pt-36 sm:pt-50"
       >
-        <div class="text-primary text-5xl font-black mb-4">Homebrew Search</div>
-        <div class="mb-12">最好用的 Homebrew 软件源搜索工具</div>
+        <div class="flex flex-col sm:flex-row items-center">
+          <UIcon
+            class="text-7xl sm:text-8xl mb-4 sm:mb-0"
+            name="devicon:homebrew"
+          />
+          <div
+            class="text-primary text-4xl sm:text-5xl font-black text-center sm:text-start leading-none"
+          >
+            <div>Homebrew</div>
+            <div>Search</div>
+          </div>
+        </div>
+        <div class="mt-4 sm:mt-8 mb-8 sm:mb-12">
+          最好用的 Homebrew 软件源搜索工具
+        </div>
         <div class="flex flex-col sm:flex-row items-center">
           <UInput
             v-model="keyword"
@@ -139,8 +162,8 @@ async function handleSearch() {
       </div>
 
       <!-- 列表 -->
-      <div v-else class="m-4 sm:m-8">
-        <div class="grid grid-cols-1 gap-8 sm:grid-cols-4 mt-22 sm:mt-26">
+      <div v-show="!first" class="m-4 sm:m-8">
+        <div class="grid grid-cols-1 gap-8 sm:grid-cols-4 mt-20 sm:mt-28">
           <template v-for="(item, index) in searchResult?.list" :key="index">
             <CoreItem
               v-if="item.tap === 'homebrew/core'"
