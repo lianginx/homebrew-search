@@ -49,9 +49,11 @@ async function handleCopyInstallCommand() {
     </div>
 
     <template #footer>
-      <div class="text-sm flex justify-between items-center">
-        <div>
-          <div class="text-xs text-neutral-600">{{ item.versions.stable }}</div>
+      <div class="text-sm flex justify-between items-center space-x-2">
+        <div class="flex-1">
+          <div class="text-xs text-neutral-600 break-all line-clamp-1">
+            {{ item.versions.stable }}
+          </div>
         </div>
         <div class="space-x-4">
           <UButton
