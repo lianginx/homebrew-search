@@ -94,6 +94,7 @@ async function handleRestore() {
             size="xl"
             icon="heroicons-solid:search"
             placeholder="搜索名称..."
+            :loading="status === 'pending'"
             @keydown.enter="handleSearch"
           />
           <UTooltip text="在 GitHub 上打开">
