@@ -2,7 +2,7 @@
 import { zh_cn } from "@nuxt/ui/locale";
 import type { Cask, Formula } from "~/type/brew";
 
-const first = ref(true);
+const route = useRoute();
 
 const colorMode = useColorMode();
 
@@ -21,22 +21,25 @@ interface SearchResult {
   limit: number;
 }
 
+const first = ref(!route.query.q);
+
 const page = ref(1);
 const limit = ref(16);
 const type = ref("");
-const keyword = ref("");
+const keyword = ref((route.query.q as string) ?? "");
+
 const {
   data: searchResult,
   status,
   refresh,
 } = await useFetch<SearchResult>(() => `/api/brew/search/${keyword.value}`, {
   query: { type, page, limit },
-  immediate: false,
+  immediate: !!keyword.value,
   watch: false,
 });
 
 async function handleSearch() {
-  if (!keyword.value.trim()) return;
+  if (!keyword.value) return;
   page.value = 1;
   first.value = false;
   refresh();
