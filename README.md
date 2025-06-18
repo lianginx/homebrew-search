@@ -2,7 +2,7 @@
 
 可能是最易用的 Homebrew Cask/Formula 在线搜索工具，提供简洁美观的界面与快速精准的搜索体验。
 
-![output](https://github.com/user-attachments/assets/264dc8d4-d66d-4632-910c-0aab905d4041)
+![brew](https://github.com/user-attachments/assets/8275615e-736a-4511-91d8-eb1dadb9bc21)
 
 ## 🚀 特性
 
