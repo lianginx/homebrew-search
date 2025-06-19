@@ -26,6 +26,28 @@ async function handleCopyInstallCommand() {
     duration: 1500,
   });
 }
+
+// 翻译描述
+const showDst = ref(false);
+const {
+  data: dst,
+  error,
+  status,
+  execute,
+} = await useFetch("/api/translate", {
+  method: "POST",
+  body: { q: props.item.desc },
+  immediate: false,
+});
+async function handleTranslate() {
+  showDst.value = !showDst.value;
+  if (props.item.desc && !dst.value) {
+    await execute();
+    if (error.value) {
+      showDst.value = false;
+    }
+  }
+}
 </script>
 
 <template>
@@ -42,8 +64,27 @@ async function handleCopyInstallCommand() {
       </div>
     </template>
 
-    <div class="flex flex-wrap line-clamp-2 h-10 text-sm text-neutral-500">
-      {{ item.desc }}
+    <div
+      class="flex flex-wrap line-clamp-2 h-10 text-sm text-neutral-500"
+      @click="handleTranslate"
+    >
+      <!-- 原文 -->
+      <div v-show="!showDst">
+        {{ item.desc }}
+      </div>
+      <!-- 译文 -->
+      <div v-show="showDst">
+        {{ dst }}
+      </div>
+      <!-- 翻译中 -->
+      <div v-if="status === 'pending'" class="flex items-center space-x-1">
+        <UIcon
+          class="animate-spin text-current"
+          name="i-lucide:loader-circle"
+          size="16"
+        />
+        <div>翻译中…</div>
+      </div>
     </div>
 
     <template #footer>

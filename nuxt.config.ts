@@ -25,4 +25,8 @@ export default defineNuxtConfig({
       "*/10 * * * *": ["brew:pull"],
     },
   },
+  runtimeConfig: {
+    baiduAppId: "",
+    baiduSecretKey: "",
+  },
 });
