@@ -184,7 +184,7 @@ defineShortcuts({
           ]"
           @update:model-value="handleSearch"
         />
-        <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-4">
           <template v-for="(item, index) in data?.list" :key="index">
             <CoreItem
               v-if="item.tap === 'homebrew/core'"
