@@ -1,16 +1,28 @@
 # Homebrew Search
 
-可能是最易用的 Homebrew Cask/Formula 在线搜索工具，提供简洁美观的界面与快速精准的搜索体验。
+可能是最易用的 Homebrew Cask/Formula 快速搜索工具，界面简洁美观，支持深色模式与响应式布局。
 
 ![brew](https://github.com/user-attachments/assets/6adc612d-66ed-4381-a9e1-dbacb238fdfe)
 
 ## 🚀 特性
 
-- **即时搜索**：支持关键词匹配的高速模糊搜索
-- **详细信息**：展示 Cask 和 Formula 的完整元数据
-- **交互设计**：暗黑模式支持 & 响应式布局
-- **RESTful API**：基于 TypeScript 构建的后端数据接口
-- **自动化更新**：每 10 分钟自动同步最新软件包数据
+- 🔍 实时搜索：支持关键词模糊匹配，响应迅速
+- 📦 快捷翻译：点击软件包描述即可快捷翻译为中文
+- 🎨 美观界面：深色模式、自适应布局，适配桌面与移动端
+- 🔧 高效实用：支持 URL Query 快速查询，一键复制安装命令
+- 🔄 数据同步：每 10 分钟自动同步最新 Homebrew 数据
+
+## 🔗 URL 查询技巧
+
+支持通过 URL 参数实现快速搜索，便于结合第三方启动器（如 Raycast、Alfred、LaunchBar）或浏览器书签实现快速查询。
+
+通过 `?q=` 参数传入关键词，即可直接定位搜索内容。例如：
+
+```
+https://brew.in-x.cc?q=docker
+```
+
+访问该链接将直接跳转并展示包含关键词 “docker” 的搜索结果。
 
 ## 🧰 技术栈
 
