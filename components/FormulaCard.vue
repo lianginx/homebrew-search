@@ -145,7 +145,7 @@ function handleTranslate() {
         >
           <UButton
             v-if="!item.disabled"
-            class="sm:invisible group-hover:visible"
+            class="sm:invisible group-hover:visible cursor-pointer"
             size="sm"
             variant="soft"
             :color="item.deprecated ? 'neutral' : 'primary'"
