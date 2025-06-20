@@ -94,6 +94,7 @@ defineShortcuts({
         <div
           class="flex-1 sm:flex-none space-x-2 flex items-center justify-end"
         >
+          <UTooltip text="搜索软件包" :kbds="['meta', 'K']">
           <UInput
             v-if="!first"
             ref="search-input"
@@ -104,7 +105,8 @@ defineShortcuts({
             placeholder="搜索名称..."
             :loading="status === 'pending'"
             @keydown.enter="handleSearch"
-          />
+            />
+          </UTooltip>
           <UTooltip text="在 GitHub 上打开">
             <UButton
               icon="lucide:github"
