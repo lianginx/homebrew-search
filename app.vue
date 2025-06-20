@@ -95,16 +95,16 @@ defineShortcuts({
           class="flex-1 sm:flex-none space-x-2 flex items-center justify-end"
         >
           <UTooltip text="搜索软件包" :kbds="['meta', 'K']">
-          <UInput
-            v-if="!first"
-            ref="search-input"
-            v-model="keyword"
-            class="w-full sm:w-80"
-            size="xl"
-            icon="heroicons-solid:search"
-            placeholder="搜索名称..."
-            :loading="status === 'pending'"
-            @keydown.enter="handleSearch"
+            <UInput
+              v-if="!first"
+              ref="search-input"
+              v-model="keyword"
+              class="w-full sm:w-80"
+              size="xl"
+              icon="heroicons-solid:search"
+              placeholder="搜索名称..."
+              :loading="status === 'pending'"
+              @keydown.enter="handleSearch"
             />
           </UTooltip>
           <UTooltip text="在 GitHub 上打开">
@@ -187,16 +187,11 @@ defineShortcuts({
           @update:model-value="handleSearch"
         />
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-4">
-          <template v-for="(item, index) in data?.list" :key="index">
-            <CoreItem
-              v-if="item.tap === 'homebrew/core'"
-              :item="item as Formula"
-            />
-            <CaskItem
-              v-if="item.tap === 'homebrew/cask'"
-              :item="item as Cask"
-            />
-          </template>
+          <FormulaCard
+            v-for="item in data?.list"
+            :key="`${item.tap}_${item.ruby_source_checksum.sha256}`"
+            :item="item"
+          />
         </div>
         <UPagination
           v-if="data?.total"
