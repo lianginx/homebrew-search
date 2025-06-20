@@ -79,14 +79,16 @@ function handleTranslate() {
 </script>
 
 <template>
-  <UCard class="group hover:shadow-2xl/8 shadow-primary">
+  <UCard
+    class="group hover:shadow-2xl/8 shadow-primary text-sm text-neutral-500"
+  >
     <template #header>
-      <div class="flex justify-between items-center space-x-2">
+      <div class="flex justify-between items-center space-x-4">
         <div>
           <!-- 主标题 -->
           <UTooltip :text="title">
             <div
-              class="font-bold line-clamp-1 hover:text-primary"
+              class="font-bold text-base text-default line-clamp-1 hover:text-primary cursor-default"
               @click="handleCopyTitle"
             >
               {{ title }}
@@ -94,22 +96,25 @@ function handleTranslate() {
           </UTooltip>
           <!-- 副标题 -->
           <ULink
-            class="text-xs text-neutral-600 mt-0.5 line-clamp-1 break-all"
+            class="mt-0.5 line-clamp-1 break-all"
             :href="item.homepage"
             target="_blank"
           >
             {{ item.homepage }}
           </ULink>
         </div>
-        <UBadge variant="subtle">{{ type }}</UBadge>
+        <UBadge
+          class="cursor-default"
+          variant="subtle"
+          :color="item.disabled || item.deprecated ? 'neutral' : 'primary'"
+        >
+          {{ type }}
+        </UBadge>
       </div>
     </template>
 
     <UTooltip :text="desc">
-      <div
-        class="flex flex-wrap line-clamp-2 h-10 text-sm text-neutral-500"
-        @click="handleTranslate"
-      >
+      <div class="flex flex-wrap line-clamp-2 h-10" @click="handleTranslate">
         <div v-if="inTranslation" class="flex items-center space-x-1">
           <UIcon
             class="animate-spin text-current"
@@ -123,22 +128,33 @@ function handleTranslate() {
     </UTooltip>
 
     <template #footer>
-      <div class="text-sm flex justify-between items-center space-x-2">
-        <div class="flex-1">
-          <div class="text-xs text-neutral-600 break-all line-clamp-1">
-            {{ version }}
-          </div>
+      <div class="flex justify-between items-center space-x-2">
+        <div class="flex-1 break-all line-clamp-1">
+          {{ version }}
         </div>
-        <div class="space-x-4">
+        <UTooltip
+          :text="
+            item.disabled
+              ? `已于 ${item.disable_date} 禁用，原因：${item.disable_reason}`
+              : item.deprecated
+              ? `已于 ${item.deprecation_date} 弃用，原因：${item.deprecation_reason}`
+              : ''
+          "
+          :disabled="!item.disabled && !item.deprecated"
+          :delay-duration="0"
+        >
           <UButton
+            v-if="!item.disabled"
             class="sm:invisible group-hover:visible"
             size="sm"
             variant="soft"
+            :color="item.deprecated ? 'neutral' : 'primary'"
             @click="handleCopyInstallCommand"
           >
             复制命令
           </UButton>
-        </div>
+          <div v-else class="cursor-no-drop">已禁用</div>
+        </UTooltip>
       </div>
     </template>
   </UCard>
