@@ -4,9 +4,18 @@ import type { H3Event, EventHandlerRequest } from "h3";
 export default defineEventHandler(async (event) => {
   const { keyword, type, page, limit } = handleParams(event);
 
-  // 查询缓存 key
   const storage = useStorage("data");
-  const keys = await storage.getKeys(`${type}:`);
+
+  // 查询缓存 key
+  const keys = [];
+  if (type === "cask" || !type) {
+    const nextKeys = await storage.getKeys("cask:");
+    keys.push(...nextKeys);
+  }
+  if (type === "formula" || !type) {
+    const nextKeys = await storage.getKeys("formula:");
+    keys.push(...nextKeys);
+  }
 
   // 模糊搜索
   const fuse = new Fuse(keys);
