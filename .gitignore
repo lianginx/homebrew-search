@@ -22,3 +22,6 @@ logs
 .env
 .env.*
 !.env.example
+
+# Deploy scripts
+scripts/deploy.sh
