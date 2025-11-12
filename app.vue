@@ -37,12 +37,22 @@ watch(error, () => {
   useToast().add({ title: error.value?.statusMessage, color: "error" });
 });
 
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 async function handleSearch() {
   if (!keyword.value) return;
   page.value = 1;
   first.value = false;
   router.replace({ query: { q: keyword.value } });
   refresh();
+  scrollToTop();
+}
+
+async function handleUpdatePage() {
+  refresh();
+  scrollToTop();
 }
 
 async function handleRestore() {
@@ -216,7 +226,7 @@ defineShortcuts({
         size="lg"
         :items-per-page="data.limit"
         :total="data.total"
-        @update:page="refresh()"
+        @update:page="handleUpdatePage"
       />
     </UContainer>
   </UApp>
