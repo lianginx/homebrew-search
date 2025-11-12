@@ -185,13 +185,30 @@ defineShortcuts({
         ]"
         @update:model-value="handleSearch"
       />
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-4">
+
+      <!-- 骨架 -->
+      <div
+        v-show="status === 'pending'"
+        class="grid grid-cols-1 gap-4 sm:grid-cols-4"
+      >
+        <SkeletonCard
+          v-for="(item, index) in Array.from({ length: 16 })"
+          :key="index"
+        />
+      </div>
+
+      <div
+        v-show="status === 'success'"
+        class="grid grid-cols-1 gap-4 sm:grid-cols-4"
+      >
         <FormulaCard
           v-for="item in data?.list"
           :key="`${item.tap}_${item.ruby_source_checksum.sha256}`"
           :item="item"
         />
       </div>
+
+      <!-- 分页 -->
       <UPagination
         v-if="data?.total"
         v-model:page="page"
