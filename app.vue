@@ -10,6 +10,7 @@ interface SearchResult {
 }
 
 const route = useRoute();
+const router = useRouter();
 
 const first = ref(!route.query.q);
 const page = ref(1);
@@ -40,7 +41,8 @@ async function handleSearch() {
   if (!keyword.value) return;
   page.value = 1;
   first.value = false;
-  await refresh();
+  router.replace({ query: { q: keyword.value } });
+  refresh();
 }
 
 async function handleRestore() {
