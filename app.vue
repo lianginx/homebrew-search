@@ -9,14 +9,30 @@ interface SearchResult {
   limit: number;
 }
 
+enum TabsOptions {
+  All = "all",
+  Formula = "formula",
+  Cask = "cask",
+}
+
 const route = useRoute();
 const router = useRouter();
 
 const first = ref(!route.query.q);
 const page = ref(1);
 const limit = ref(16);
-const type = ref();
 const keyword = ref((route.query.q as string) ?? "");
+
+const type = ref<TabsOptions>(
+  ["all", "formula", "cask"].includes(route.query.t as string)
+    ? (route.query.t as TabsOptions)
+    : TabsOptions.All
+);
+const tabsOptions = [
+  { label: "All", value: TabsOptions.All },
+  { label: "Formula", value: TabsOptions.Formula },
+  { label: "Cask", value: TabsOptions.Cask },
+];
 
 const { data, status, error, refresh, clear } = await useFetch<SearchResult>(
   () => `/api/brew/search/${keyword.value}`,
@@ -24,7 +40,9 @@ const { data, status, error, refresh, clear } = await useFetch<SearchResult>(
     query: {
       // 为了解决 UTabs 组件的 Bug
       // 当选项 value 为 undfined 或 '' 时，modelValue 会被赋值为 0
-      type: computed(() => (type.value == 0 ? undefined : type.value)),
+      type: computed(() =>
+        type.value === TabsOptions.All ? undefined : type.value
+      ),
       page,
       limit,
     },
@@ -45,7 +63,7 @@ async function handleSearch() {
   if (!keyword.value) return;
   page.value = 1;
   first.value = false;
-  router.replace({ query: { q: keyword.value } });
+  router.replace({ query: { q: keyword.value, t: type.value } });
   refresh();
   scrollToTop();
 }
@@ -58,6 +76,8 @@ async function handleUpdatePage() {
 async function handleRestore() {
   page.value = 1;
   keyword.value = "";
+  type.value = TabsOptions.All;
+  router.replace({});
   first.value = true;
   clear();
 }
@@ -188,11 +208,7 @@ defineShortcuts({
         class="mb-6"
         size="xl"
         variant="link"
-        :items="[
-          { label: 'All', value: undefined },
-          { label: 'Formula', value: 'formula' },
-          { label: 'Cask', value: 'cask' },
-        ]"
+        :items="tabsOptions"
         @update:model-value="handleSearch"
       />
 
