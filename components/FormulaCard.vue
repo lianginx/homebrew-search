@@ -138,9 +138,8 @@ function handleTranslate() {
               ? `已于 ${item.disable_date} 禁用，原因：${item.disable_reason}`
               : item.deprecated
               ? `已于 ${item.deprecation_date} 弃用，原因：${item.deprecation_reason}`
-              : ''
+              : installCommand
           "
-          :disabled="!item.disabled && !item.deprecated"
           :delay-duration="0"
         >
           <UButton
