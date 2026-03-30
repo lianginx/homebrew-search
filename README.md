@@ -33,7 +33,48 @@ https://brew.in-x.cc?q=docker
 | CSS  | Tailwind CSS                  |
 | 存储 | Nitro Storage KV 缓存         |
 
-## 🛠️ 开发环境要求
+## 🐳 Docker 部署
+
+### 前置条件
+
+1. 创建 `.env` 文件并配置环境变量：
+
+```bash
+# 复制示例环境变量文件
+cp .env.example .env
+
+# 编辑 .env 文件，填入实际配置
+```
+
+### 使用 Docker Compose（推荐）
+
+```bash
+# 构建并启动容器
+docker-compose up -d
+
+# 查看运行状态
+docker-compose ps
+
+# 停止服务
+docker-compose down
+```
+
+### 使用 Docker 命令
+
+```bash
+# 构建镜像
+docker build -t homebrew-search .
+
+# 运行容器
+docker run -d \
+  --name homebrew-search \
+  -p 3000:3000 \
+  --env-file .env \
+  --restart unless-stopped \
+  homebrew-search
+```
+
+## 🛠️ 项目开发
 
 ```bash
 # 安装依赖
@@ -48,6 +89,8 @@ npm run build
 # 本地预览生产环境
 npm run preview
 ```
+
+项目启动后，通过浏览器访问 `http://localhost:3000` 即可使用。
 
 ## 📄 许可证
 
