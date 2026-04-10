@@ -4,7 +4,7 @@ import type { H3Event, EventHandlerRequest } from "h3";
 export default defineEventHandler(async (event) => {
   const { keyword, type, page, limit } = handleParams(event);
 
-  const storage = useStorage("data");
+  const storage = useStorage();
 
   // 查询缓存 key
   const keys = [];

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { zh_cn } from "@nuxt/ui/locale";
-import type { Cask, Formula } from "~/type/brew";
 
 interface SearchResult {
   list: Array<Cask | Formula>;
@@ -107,14 +106,9 @@ defineShortcuts({
   <UApp :locale="zh_cn">
     <!-- 顶栏 -->
     <div
-      class="fixed z-10 top-0 w-full flex justify-between items-center p-4 sm:p-8 bg-gradient-to-b from-(--ui-bg)/80 to-transparent"
-    >
+      class="fixed z-10 top-0 w-full flex justify-between items-center p-4 sm:p-8 bg-gradient-to-b from-(--ui-bg)/80 to-transparent">
       <div>
-        <div
-          v-show="!first"
-          class="mr-8 cursor-pointer hidden sm:flex items-center"
-          @click="handleRestore"
-        >
+        <div v-show="!first" class="mr-8 cursor-pointer hidden sm:flex items-center" @click="handleRestore">
           <UIcon name="devicon:homebrew" variant="outline" size="44" />
           <span class="ml-2 font-black text-primary text-2xl leading-none">
             <div>Homebrew</div>
@@ -124,55 +118,27 @@ defineShortcuts({
       </div>
       <div class="flex-1 sm:flex-none space-x-2 flex items-center justify-end">
         <UTooltip text="搜索软件包" :kbds="['meta', 'K']">
-          <UInput
-            v-if="!first"
-            ref="search-input"
-            v-model="keyword"
-            class="w-full sm:w-80"
-            size="xl"
-            icon="heroicons-solid:search"
-            placeholder="搜索名称..."
-            :loading="status === 'pending'"
-            @keydown.enter="handleSearch"
-          />
+          <UInput v-if="!first" ref="search-input" v-model="keyword" class="w-full sm:w-80" size="xl"
+            icon="heroicons-solid:search" placeholder="搜索名称..." :loading="status === 'pending'"
+            @keydown.enter="handleSearch" />
         </UTooltip>
         <UTooltip text="在 GitHub 上打开">
-          <UButton
-            icon="lucide:github"
-            variant="outline"
-            color="neutral"
-            size="xl"
-            href="https://github.com/lianginx/homebrew-search"
-            target="_blank"
-          />
+          <UButton icon="lucide:github" variant="outline" color="neutral" size="xl"
+            href="https://github.com/lianginx/homebrew-search" target="_blank" />
         </UTooltip>
         <ClientOnly>
           <UTooltip text="切换主题">
-            <UButton
-              :icon="colorModeIcon"
-              variant="outline"
-              color="neutral"
-              size="xl"
-              @click="handleSwitchColorMode"
-            />
+            <UButton :icon="colorModeIcon" variant="outline" color="neutral" size="xl" @click="handleSwitchColorMode" />
           </UTooltip>
         </ClientOnly>
       </div>
     </div>
 
     <!-- 首屏搜索 -->
-    <div
-      v-show="first"
-      class="flex flex-col items-center h-screen text-center pt-36 sm:pt-50"
-    >
+    <div v-show="first" class="flex flex-col items-center h-screen text-center pt-36 sm:pt-50">
       <div class="flex flex-col sm:flex-row items-center">
-        <UIcon
-          class="text-7xl sm:text-8xl mb-4 sm:mb-0"
-          name="devicon:homebrew"
-        />
-        <div
-          class="text-primary text-4xl sm:text-5xl font-black text-center sm:text-start leading-none"
-        >
+        <UIcon class="text-7xl sm:text-8xl mb-4 sm:mb-0" name="devicon:homebrew" />
+        <div class="text-primary text-4xl sm:text-5xl font-black text-center sm:text-start leading-none">
           <div>Homebrew</div>
           <div>Search</div>
         </div>
@@ -181,21 +147,9 @@ defineShortcuts({
         最好用的 Homebrew 软件源搜索工具
       </div>
       <div class="flex flex-col sm:flex-row items-center">
-        <UInput
-          v-model="keyword"
-          class="w-80"
-          size="xl"
-          icon="heroicons-solid:search"
-          enterkeyhint="search"
-          placeholder="搜索名称..."
-          @keydown.enter="handleSearch"
-        />
-        <UButton
-          class="ml-4 hidden sm:flex"
-          size="xl"
-          :loading="status === 'pending'"
-          @click="handleSearch"
-        >
+        <UInput v-model="keyword" class="w-80" size="xl" icon="heroicons-solid:search" enterkeyhint="search"
+          placeholder="搜索名称..." @keydown.enter="handleSearch" />
+        <UButton class="ml-4 hidden sm:flex" size="xl" :loading="status === 'pending'" @click="handleSearch">
           搜索
         </UButton>
       </div>
@@ -203,49 +157,21 @@ defineShortcuts({
 
     <!-- 列表 -->
     <UContainer v-show="!first" class="my-20 sm:mt-28">
-      <UTabs
-        v-model="type"
-        class="mb-6"
-        size="xl"
-        variant="link"
-        :items="tabsOptions"
-        @update:model-value="handleSearch"
-      />
+      <UTabs v-model="type" class="mb-6" size="xl" variant="link" :items="tabsOptions"
+        @update:model-value="handleSearch" />
 
       <!-- 骨架 -->
-      <div
-        v-show="status === 'pending'"
-        class="grid grid-cols-1 gap-4 sm:grid-cols-4"
-      >
-        <SkeletonCard
-          v-for="(item, index) in Array.from({ length: 16 })"
-          :key="index"
-        />
+      <div v-show="status === 'pending'" class="grid grid-cols-1 gap-4 sm:grid-cols-4">
+        <SkeletonCard v-for="(item, index) in Array.from({ length: 16 })" :key="index" />
       </div>
 
-      <div
-        v-show="status === 'success'"
-        class="grid grid-cols-1 gap-4 sm:grid-cols-4"
-      >
-        <FormulaCard
-          v-for="item in data?.list"
-          :key="`${item.tap}_${item.ruby_source_checksum.sha256}`"
-          :item="item"
-        />
+      <div v-show="status === 'success'" class="grid grid-cols-1 gap-4 sm:grid-cols-4">
+        <FormulaCard v-for="item in data?.list" :key="`${item.tap}_${item.ruby_source_checksum.sha256}`" :item="item" />
       </div>
 
       <!-- 分页 -->
-      <UPagination
-        v-if="data?.total"
-        v-model:page="page"
-        class="mt-8"
-        size="lg"
-        :items-per-page="data.limit"
-        :total="data.total"
-        @update:page="handleUpdatePage"
-      />
+      <UPagination v-if="data?.total" v-model:page="page" class="mt-8" size="lg" :items-per-page="data.limit"
+        :total="data.total" @update:page="handleUpdatePage" />
     </UContainer>
   </UApp>
 </template>
-
-<style scoped></style>

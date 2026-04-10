@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { Cask, Formula } from "~/type/brew";
-
 const props = defineProps<{
   item: Cask | Formula;
 }>();
@@ -79,35 +77,24 @@ function handleTranslate() {
 </script>
 
 <template>
-  <UCard
-    class="group hover:shadow-2xl/8 shadow-primary text-sm text-neutral-500"
-  >
+  <UCard class="group hover:shadow-2xl/8 shadow-primary text-sm text-neutral-500">
     <template #header>
       <div class="flex justify-between items-center space-x-4">
         <div>
           <!-- 主标题 -->
           <UTooltip :text="title">
-            <div
-              class="font-bold text-base text-default line-clamp-1 hover:text-primary cursor-default"
-              @click="handleCopyTitle"
-            >
+            <div class="font-bold text-base text-default line-clamp-1 hover:text-primary cursor-default"
+              @click="handleCopyTitle">
               {{ title }}
             </div>
           </UTooltip>
           <!-- 副标题 -->
-          <ULink
-            class="mt-0.5 line-clamp-1 break-all"
-            :href="item.homepage"
-            target="_blank"
-          >
+          <ULink class="mt-0.5 line-clamp-1 break-all" :href="item.homepage" target="_blank">
             {{ item.homepage }}
           </ULink>
         </div>
-        <UBadge
-          class="cursor-default"
-          variant="subtle"
-          :color="item.disabled || item.deprecated ? 'neutral' : 'primary'"
-        >
+        <UBadge class="cursor-default" variant="subtle"
+          :color="item.disabled || item.deprecated ? 'neutral' : 'primary'">
           {{ type }}
         </UBadge>
       </div>
@@ -116,11 +103,7 @@ function handleTranslate() {
     <UTooltip :text="desc">
       <div class="flex flex-wrap line-clamp-2 h-10" @click="handleTranslate">
         <div v-if="inTranslation" class="flex items-center space-x-1">
-          <UIcon
-            class="animate-spin text-current"
-            name="i-lucide:loader-circle"
-            size="16"
-          />
+          <UIcon class="animate-spin text-current" name="i-lucide:loader-circle" size="16" />
           <div>翻译中…</div>
         </div>
         <div v-else>{{ desc }}</div>
@@ -132,24 +115,14 @@ function handleTranslate() {
         <div class="flex-1 break-all line-clamp-1">
           {{ version }}
         </div>
-        <UTooltip
-          :text="
-            item.disabled
-              ? `已于 ${item.disable_date} 禁用，原因：${item.disable_reason}`
-              : item.deprecated
+        <UTooltip :text="item.disabled
+            ? `已于 ${item.disable_date} 禁用，原因：${item.disable_reason}`
+            : item.deprecated
               ? `已于 ${item.deprecation_date} 弃用，原因：${item.deprecation_reason}`
               : installCommand
-          "
-          :delay-duration="0"
-        >
-          <UButton
-            v-if="!item.disabled"
-            class="sm:invisible group-hover:visible cursor-pointer"
-            size="sm"
-            variant="soft"
-            :color="item.deprecated ? 'neutral' : 'primary'"
-            @click="handleCopyInstallCommand"
-          >
+          " :delay-duration="0">
+          <UButton v-if="!item.disabled" class="sm:invisible group-hover:visible cursor-pointer" size="sm"
+            variant="soft" :color="item.deprecated ? 'neutral' : 'primary'" @click="handleCopyInstallCommand">
             复制命令
           </UButton>
           <div v-else class="cursor-no-drop">已禁用</div>
