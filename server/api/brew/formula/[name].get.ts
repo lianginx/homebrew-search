@@ -1,28 +1,28 @@
 export default defineEventHandler(async (event) => {
-  const { name } = getRouterParams(event);
+  const { name } = getRouterParams(event)
   if (!name) {
     throw createError({
       statusCode: 400,
-      statusMessage: "Name parameter is required",
-    });
+      statusMessage: 'Name parameter is required',
+    })
   }
 
-  const { force = "0" } = getQuery(event);
-  const forceBoolean = !!parseInt(force as string);
+  const { force = '0' } = getQuery(event)
+  const forceBoolean = !!Number.parseInt(force as string)
 
-  const storage = useStorage();
+  const storage = useStorage()
 
   // 抓取最新数据
   if (forceBoolean) {
-    const formula = await getFormulaByName(name);
-    await storage.setItem(`formula:${formula.name}`, formula);
-    return formula;
+    const formula = await getFormulaByName(name)
+    await storage.setItem(`formula:${formula.name}`, formula)
+    return formula
   }
 
   // 返回缓存数据
-  const formula = await storage.getItem<Formula>(`formula:${name}`);
+  const formula = await storage.getItem<Formula>(`formula:${name}`)
   if (!formula) {
-    throw createError({ statusCode: 404, statusMessage: "Formula not found" });
+    throw createError({ statusCode: 404, statusMessage: 'Formula not found' })
   }
-  return formula;
-});
+  return formula
+})

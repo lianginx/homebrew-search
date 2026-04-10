@@ -3,7 +3,7 @@ services:
     image: homebrew-search
     build: .
     ports:
-      - "50000:3000"
+      - '50000:3000'
     env_file:
       - .env
     restart: unless-stopped

@@ -1,78 +1,75 @@
 <script setup lang="ts">
 const props = defineProps<{
-  item: Cask | Formula;
-}>();
+  item: Cask | Formula
+}>()
 
-const toast = useToast();
+const toast = useToast()
 
-const isCask = computed(() => props.item.tap === "homebrew/cask");
-
-const type = computed(() => (isCask.value ? "Cask" : "Formula"));
-
+const isCask = computed(() => props.item.tap === 'homebrew/cask')
+const type = computed(() => isCask.value ? 'Cask' : 'Formula')
 const title = computed(() =>
-  isCask.value ? (props.item as Cask).token : (props.item as Formula).name
-);
-
+  isCask.value
+    ? (props.item as Cask).token
+    : (props.item as Formula).name,
+)
 const version = computed(() =>
   isCask.value
     ? (props.item as Cask).version
-    : (props.item as Formula).versions.stable
-);
-
-const desc = computed(() =>
-  showDst.value ? (dst.value as string) : props.item.desc
-);
-
+    : (props.item as Formula).versions.stable,
+)
 const installCommand = computed(() =>
   isCask.value
     ? `brew install --cask ${(props.item as Cask).token}`
-    : `brew install ${(props.item as Formula).name}`
-);
+    : `brew install ${(props.item as Formula).name}`,
+)
 
 // 复制标题
 async function handleCopyTitle() {
-  await navigator.clipboard.writeText(title.value);
+  await navigator.clipboard.writeText(title.value)
   toast.add({
-    title: "已复制软件包名称到剪贴板！",
+    title: '已复制软件包名称到剪贴板！',
     duration: 1500,
-  });
+  })
 }
 
 // 复制安装命令
 async function handleCopyInstallCommand() {
-  await navigator.clipboard.writeText(installCommand.value);
+  await navigator.clipboard.writeText(installCommand.value)
   toast.add({
-    title: "已复制安装命令到剪贴板，请到终端中执行！",
+    title: '已复制安装命令到剪贴板，请到终端中执行！',
     duration: 1500,
-  });
+  })
 }
 
 // 翻译描述
-const showDst = ref(false);
-const dst = ref("");
-const inTranslation = ref(false);
+const showDst = ref(false)
+const dst = ref('')
+const inTranslation = ref(false)
+const desc = computed(() => showDst.value ? dst.value : props.item.desc)
 function handleTranslate() {
-  if (inTranslation.value) return;
+  if (inTranslation.value)
+    return
 
-  showDst.value = !showDst.value;
+  showDst.value = !showDst.value
 
-  if (!props.item.desc || dst.value) return;
+  if (!props.item.desc || dst.value)
+    return
 
-  inTranslation.value = true;
-  $fetch<string>("/api/translate", {
-    method: "POST",
+  inTranslation.value = true
+  $fetch<string>('/api/translate', {
+    method: 'POST',
     body: { q: props.item.desc },
   })
     .then((data) => {
-      dst.value = data;
-      inTranslation.value = false;
+      dst.value = data
+      inTranslation.value = false
     })
     .catch(() => {
-      showDst.value = false;
+      showDst.value = false
     })
     .finally(() => {
-      inTranslation.value = false;
-    });
+      inTranslation.value = false
+    })
 }
 </script>
 
@@ -83,8 +80,10 @@ function handleTranslate() {
         <div>
           <!-- 主标题 -->
           <UTooltip :text="title">
-            <div class="font-bold text-base text-default line-clamp-1 hover:text-primary cursor-default"
-              @click="handleCopyTitle">
+            <div
+              class="font-bold text-base text-default line-clamp-1 hover:text-primary cursor-default"
+              @click="handleCopyTitle"
+            >
               {{ title }}
             </div>
           </UTooltip>
@@ -93,8 +92,10 @@ function handleTranslate() {
             {{ item.homepage }}
           </ULink>
         </div>
-        <UBadge class="cursor-default" variant="subtle"
-          :color="item.disabled || item.deprecated ? 'neutral' : 'primary'">
+        <UBadge
+          class="cursor-default" variant="subtle"
+          :color="item.disabled || item.deprecated ? 'neutral' : 'primary'"
+        >
           {{ type }}
         </UBadge>
       </div>
@@ -106,7 +107,9 @@ function handleTranslate() {
           <UIcon class="animate-spin text-current" name="i-lucide:loader-circle" size="16" />
           <div>翻译中…</div>
         </div>
-        <div v-else>{{ desc }}</div>
+        <div v-else>
+          {{ desc }}
+        </div>
       </div>
     </UTooltip>
 
@@ -115,17 +118,23 @@ function handleTranslate() {
         <div class="flex-1 break-all line-clamp-1">
           {{ version }}
         </div>
-        <UTooltip :text="item.disabled
+        <UTooltip
+          :text="item.disabled
             ? `已于 ${item.disable_date} 禁用，原因：${item.disable_reason}`
             : item.deprecated
               ? `已于 ${item.deprecation_date} 弃用，原因：${item.deprecation_reason}`
               : installCommand
-          " :delay-duration="0">
-          <UButton v-if="!item.disabled" class="sm:invisible group-hover:visible cursor-pointer" size="sm"
-            variant="soft" :color="item.deprecated ? 'neutral' : 'primary'" @click="handleCopyInstallCommand">
+          " :delay-duration="0"
+        >
+          <UButton
+            v-if="!item.disabled" class="sm:invisible group-hover:visible cursor-pointer" size="sm"
+            variant="soft" :color="item.deprecated ? 'neutral' : 'primary'" @click="handleCopyInstallCommand"
+          >
             复制命令
           </UButton>
-          <div v-else class="cursor-no-drop">已禁用</div>
+          <div v-else class="cursor-no-drop">
+            已禁用
+          </div>
         </UTooltip>
       </div>
     </template>

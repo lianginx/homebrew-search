@@ -1,37 +1,37 @@
 <script setup lang="ts">
-import { zh_cn } from "@nuxt/ui/locale";
+import { zh_cn } from '@nuxt/ui/locale'
 
 interface SearchResult {
-  list: Array<Cask | Formula>;
-  total: number;
-  page: number;
-  limit: number;
+  list: Array<Cask | Formula>
+  total: number
+  page: number
+  limit: number
 }
 
 enum TabsOptions {
-  All = "all",
-  Formula = "formula",
-  Cask = "cask",
+  All = 'all',
+  Formula = 'formula',
+  Cask = 'cask',
 }
 
-const route = useRoute();
-const router = useRouter();
+const route = useRoute()
+const router = useRouter()
 
-const first = ref(!route.query.q);
-const page = ref(1);
-const limit = ref(16);
-const keyword = ref((route.query.q as string) ?? "");
+const first = ref(!route.query.q)
+const page = ref(1)
+const limit = ref(16)
+const keyword = ref((route.query.q as string) ?? '')
 
 const type = ref<TabsOptions>(
-  ["all", "formula", "cask"].includes(route.query.t as string)
+  ['all', 'formula', 'cask'].includes(route.query.t as string)
     ? (route.query.t as TabsOptions)
-    : TabsOptions.All
-);
+    : TabsOptions.All,
+)
 const tabsOptions = [
-  { label: "All", value: TabsOptions.All },
-  { label: "Formula", value: TabsOptions.Formula },
-  { label: "Cask", value: TabsOptions.Cask },
-];
+  { label: 'All', value: TabsOptions.All },
+  { label: 'Formula', value: TabsOptions.Formula },
+  { label: 'Cask', value: TabsOptions.Cask },
+]
 
 const { data, status, error, refresh, clear } = await useFetch<SearchResult>(
   () => `/api/brew/search/${keyword.value}`,
@@ -40,73 +40,75 @@ const { data, status, error, refresh, clear } = await useFetch<SearchResult>(
       // 为了解决 UTabs 组件的 Bug
       // 当选项 value 为 undfined 或 '' 时，modelValue 会被赋值为 0
       type: computed(() =>
-        type.value === TabsOptions.All ? undefined : type.value
+        type.value === TabsOptions.All ? undefined : type.value,
       ),
       page,
       limit,
     },
     immediate: !!keyword.value,
     watch: false,
-  }
-);
+  },
+)
 
 watch(error, () => {
-  useToast().add({ title: error.value?.statusMessage, color: "error" });
-});
+  useToast().add({ title: error.value?.statusMessage, color: 'error' })
+})
 
 function scrollToTop() {
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 async function handleSearch() {
-  if (!keyword.value) return;
-  page.value = 1;
-  first.value = false;
-  router.replace({ query: { q: keyword.value, t: type.value } });
-  refresh();
-  scrollToTop();
+  if (!keyword.value)
+    return
+  page.value = 1
+  first.value = false
+  router.replace({ query: { q: keyword.value, t: type.value } })
+  refresh()
+  scrollToTop()
 }
 
 async function handleUpdatePage() {
-  refresh();
-  scrollToTop();
+  refresh()
+  scrollToTop()
 }
 
 async function handleRestore() {
-  page.value = 1;
-  keyword.value = "";
-  type.value = TabsOptions.All;
-  router.replace({});
-  first.value = true;
-  clear();
+  page.value = 1
+  keyword.value = ''
+  type.value = TabsOptions.All
+  router.replace({})
+  first.value = true
+  clear()
 }
 
 // 亮/暗主题
-const colorMode = useColorMode();
+const colorMode = useColorMode()
 const colorModeIcon = computed(() => {
-  return colorMode.value === "dark" ? "i-lucide:moon" : "i-lucide:sun";
-});
+  return colorMode.value === 'dark' ? 'i-lucide:moon' : 'i-lucide:sun'
+})
 function handleSwitchColorMode() {
-  colorMode.preference = colorMode.value === "dark" ? "light" : "dark";
+  colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
 }
 
 // 搜索快捷键 meta + k
-const searchInputRef = useTemplateRef("search-input");
+const searchInputRef = useTemplateRef('search-input')
 defineShortcuts({
   meta_k: () => {
     if (searchInputRef.value?.inputRef) {
-      searchInputRef.value.inputRef.setSelectionRange(0, keyword.value.length);
-      searchInputRef.value.inputRef.focus();
+      searchInputRef.value.inputRef.setSelectionRange(0, keyword.value.length)
+      searchInputRef.value.inputRef.focus()
     }
   },
-});
+})
 </script>
 
 <template>
   <UApp :locale="zh_cn">
     <!-- 顶栏 -->
     <div
-      class="fixed z-10 top-0 w-full flex justify-between items-center p-4 sm:p-8 bg-gradient-to-b from-(--ui-bg)/80 to-transparent">
+      class="fixed z-10 top-0 w-full flex justify-between items-center p-4 sm:p-8 bg-gradient-to-b from-(--ui-bg)/80 to-transparent"
+    >
       <div>
         <div v-show="!first" class="mr-8 cursor-pointer hidden sm:flex items-center" @click="handleRestore">
           <UIcon name="devicon:homebrew" variant="outline" size="44" />
@@ -118,13 +120,17 @@ defineShortcuts({
       </div>
       <div class="flex-1 sm:flex-none space-x-2 flex items-center justify-end">
         <UTooltip text="搜索软件包" :kbds="['meta', 'K']">
-          <UInput v-if="!first" ref="search-input" v-model="keyword" class="w-full sm:w-80" size="xl"
+          <UInput
+            v-if="!first" ref="search-input" v-model="keyword" class="w-full sm:w-80" size="xl"
             icon="heroicons-solid:search" placeholder="搜索名称..." :loading="status === 'pending'"
-            @keydown.enter="handleSearch" />
+            @keydown.enter="handleSearch"
+          />
         </UTooltip>
         <UTooltip text="在 GitHub 上打开">
-          <UButton icon="lucide:github" variant="outline" color="neutral" size="xl"
-            href="https://github.com/lianginx/homebrew-search" target="_blank" />
+          <UButton
+            icon="lucide:github" variant="outline" color="neutral" size="xl"
+            href="https://github.com/lianginx/homebrew-search" target="_blank"
+          />
         </UTooltip>
         <ClientOnly>
           <UTooltip text="切换主题">
@@ -147,8 +153,10 @@ defineShortcuts({
         最好用的 Homebrew 软件源搜索工具
       </div>
       <div class="flex flex-col sm:flex-row items-center">
-        <UInput v-model="keyword" class="w-80" size="xl" icon="heroicons-solid:search" enterkeyhint="search"
-          placeholder="搜索名称..." @keydown.enter="handleSearch" />
+        <UInput
+          v-model="keyword" class="w-80" size="xl" icon="heroicons-solid:search" enterkeyhint="search"
+          placeholder="搜索名称..." @keydown.enter="handleSearch"
+        />
         <UButton class="ml-4 hidden sm:flex" size="xl" :loading="status === 'pending'" @click="handleSearch">
           搜索
         </UButton>
@@ -157,8 +165,10 @@ defineShortcuts({
 
     <!-- 列表 -->
     <UContainer v-show="!first" class="my-20 sm:mt-28">
-      <UTabs v-model="type" class="mb-6" size="xl" variant="link" :items="tabsOptions"
-        @update:model-value="handleSearch" />
+      <UTabs
+        v-model="type" class="mb-6" size="xl" variant="link" :items="tabsOptions"
+        @update:model-value="handleSearch"
+      />
 
       <!-- 骨架 -->
       <div v-show="status === 'pending'" class="grid grid-cols-1 gap-4 sm:grid-cols-4">
@@ -170,8 +180,10 @@ defineShortcuts({
       </div>
 
       <!-- 分页 -->
-      <UPagination v-if="data?.total" v-model:page="page" class="mt-8" size="lg" :items-per-page="data.limit"
-        :total="data.total" @update:page="handleUpdatePage" />
+      <UPagination
+        v-if="data?.total" v-model:page="page" class="mt-8" size="lg" :items-per-page="data.limit"
+        :total="data.total" @update:page="handleUpdatePage"
+      />
     </UContainer>
   </UApp>
 </template>

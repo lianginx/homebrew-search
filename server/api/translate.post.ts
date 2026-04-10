@@ -1,26 +1,26 @@
-import { createHash } from "node:crypto";
+import { createHash } from 'node:crypto'
 
 export default defineEventHandler(async (event) => {
-  const { q } = await readBody(event);
+  const { q } = await readBody(event)
 
-  const storage = useStorage();
+  const storage = useStorage()
 
-  const cacheKey = createHash("md5").update(q).digest("hex");
+  const cacheKey = createHash('md5').update(q).digest('hex')
 
-  const cached = await storage.getItem(`translate:${cacheKey}`);
+  const cached = await storage.getItem(`translate:${cacheKey}`)
 
   if (cached) {
-    return cached;
+    return cached
   }
 
-  const result = await translate(q, "auto", "zh");
-  const dst = result.trans_result[0]?.dst;
+  const result = await translate(q, 'auto', 'zh')
+  const dst = result.trans_result[0]?.dst
 
   if (!dst) {
-    return q;
+    return q
   }
 
-  await storage.setItem(`translate:${cacheKey}`, dst);
+  await storage.setItem(`translate:${cacheKey}`, dst)
 
-  return dst;
-});
+  return dst
+})

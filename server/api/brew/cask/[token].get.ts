@@ -1,28 +1,28 @@
 export default defineEventHandler(async (event) => {
-  const { token } = getRouterParams(event);
+  const { token } = getRouterParams(event)
   if (!token) {
     throw createError({
       statusCode: 400,
-      statusMessage: "Token parameter is required",
-    });
+      statusMessage: 'Token parameter is required',
+    })
   }
 
-  const { force = "0" } = getQuery(event);
-  const forceBoolean = !!parseInt(force as string);
+  const { force = '0' } = getQuery(event)
+  const forceBoolean = !!Number.parseInt(force as string)
 
-  const storage = useStorage();
+  const storage = useStorage()
 
   // 抓取最新数据
   if (forceBoolean) {
-    const cask = await getCaskByToken(token);
-    await storage.setItem(`cask:${cask.token}`, cask);
-    return cask;
+    const cask = await getCaskByToken(token)
+    await storage.setItem(`cask:${cask.token}`, cask)
+    return cask
   }
 
   // 返回缓存数据
-  const cask = await storage.getItem<Formula>(`cask:${token}`);
+  const cask = await storage.getItem<Formula>(`cask:${token}`)
   if (!cask) {
-    throw createError({ statusCode: 404, statusMessage: "Cask not found" });
+    throw createError({ statusCode: 404, statusMessage: 'Cask not found' })
   }
-  return cask;
-});
+  return cask
+})
